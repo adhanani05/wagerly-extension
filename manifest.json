@@ -1,0 +1,23 @@
+{
+  "name": "Wagerly",
+  "version": "1.0.0",
+  "description": "AI Copilot for Sports Betting",
+  "manifest_version": 3,
+  "author": "Aditya Dhanani",
+  "permissions": ["sidePanel", "tabs", "activeTab", "scripting", "storage"],
+  "host_permissions": ["https://sports.nj.betmgm.com/en/sports/events/*"],
+  "action": {
+    "default_title": "Click to open panel"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "main-sp.html"
+  },
+  "icons": {
+    "16": "icons/wagerly-16.png",
+    "48": "icons/wagerly-48.png",
+    "128": "icons/wagerly-128.png"
+  }
+}
