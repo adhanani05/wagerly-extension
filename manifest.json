@@ -5,7 +5,10 @@
   "manifest_version": 3,
   "author": "Aditya Dhanani",
   "permissions": ["sidePanel", "tabs", "activeTab", "scripting", "storage"],
-  "host_permissions": ["https://sports.nj.betmgm.com/en/sports/events/*"],
+  "host_permissions": [
+    "https://sports.nj.betmgm.com/en/sports/events/*",
+    "https://sportsbook.draftkings.com/event/*"
+  ],
   "action": {
     "default_title": "Click to open panel"
   },

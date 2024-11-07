@@ -1,6 +1,8 @@
 console.log("Background script loaded"); // New logging line
+let storedData = "";
 
 const BETMGM_ORIGIN = "https://sports.nj.betmgm.com";
+const DRAFTKINGS_ORIGIN = "https://sportsbook.draftkings.com";
 
 // Allows users to open the side panel by clicking on the action toolbar icon
 chrome.sidePanel
@@ -11,7 +13,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
   if (!tab.url) return;
   const url = new URL(tab.url);
   // Enables the side panel on betmgm.com
-  if (url.origin === BETMGM_ORIGIN) {
+  if (url.origin === BETMGM_ORIGIN || url.origin === DRAFTKINGS_ORIGIN) {
     await chrome.sidePanel.setOptions({
       tabId,
       path: "main-sp.html",
