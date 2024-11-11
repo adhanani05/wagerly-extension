@@ -41,6 +41,26 @@ document.addEventListener("DOMContentLoaded", () => {
         ? "analysis-message"
         : "assistant-message"
     }`;
+
+    if (isInitialAnalysis) {
+      content = content.replace(
+        /<h2>Public Sentiment:<\/h2>/g,
+        '<h2><span class="analysis-header-icon-1"></span>Public Sentiment:</h2>'
+      );
+      content = content.replace(
+        /<h2>High-Value Bets:<\/h2>/g,
+        '<h2><span class="analysis-header-icon-2"></span>High-Value Bets:</h2>'
+      );
+      content = content.replace(
+        /<h2>Strategic Suggestions:<\/h2>/g,
+        '<h2><span class="analysis-header-icon-3"></span>Strategic Suggestions:</h2>'
+      );
+      content = content.replace(
+        /<h2>Key Insights:<\/h2>/g,
+        '<h2><span class="analysis-header-icon-4"></span>Key Insights:</h2>'
+      );
+    }
+
     messageDiv.innerHTML = content;
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -80,11 +100,12 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           body: JSON.stringify({
             model: "gpt-4o-mini",
-            max_completion_tokens: 600,
+            max_completion_tokens: 150,
             messages: [
               {
                 role: "system",
-                content: `You are an advanced sports betting analyst AI assistant. Structure all your responses in a clear, organized format with sections and bullet points where appropriate. Keep responses concise but informative. Base your responses on the initial analysis and previous context. Use HTML tags for formatting (<h2> for headers, <p> for paragraphs, <ul>/<li> for lists).`,
+                content:
+                  "You are an advanced sports betting analyst AI assistant. Provide a concise, high-value response. Do not use asteriks or any special characters in your response.",
               },
               ...messageHistory,
               {
