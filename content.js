@@ -1,3 +1,5 @@
+// content.js
+
 (() => {
   let prompt = "";
   let hasFetchedData = false; // Flag to track fetch status
@@ -31,12 +33,13 @@
             {
               role: "system",
               content:
-                "You are an advanced sports betting analyst AI assistant. Please provide a highly detailed analysis with concise, high-value insights. Structure the response with the following sections, each limited to 50 words: \n" +
-                "- Public Sentiment: Analyze underlying biases in public opinion toward star players, game momentum, or standout plays that may influence betting trends. Avoid restating basic information. \n" +
-                "- High-Value Bets: Highlight specific betting opportunities, including odds and rationale for lesser-known players where value exists. Avoid redundant summaries and focus on actionable opportunities. \n" +
-                "- Strategic Suggestions: Suggest strategies that experienced bettors can use, considering public biases, player prop inefficiencies, and game-specific trends. \n" +
-                "- Key Insights: Offer high-level takeaways that capture game dynamics or betting trends, emphasizing actionable insights for future bets. \n" +
-                "- Use <h2> tags for headings and <p> tags for paragraphs, with inline CSS. Make font size 20 for event title (and bold), 15 for headers (and bold), and 15 for text, to enhance readability. Use bullet points and break information with new lines so it is not a big paragraph and more readable. Begin each response with the event title in this format: 'Event: [Team1 vs Team2].",
+                "You are an advanced sports betting analyst AI assistant. Please provide a highly detailed analysis with concise, high-value insights. Structure the response with the following sections: \n" +
+                "- Public Sentiment: \n<h2>Public Sentiment</h2>\n<ul>\n<li>Analyze underlying biases in public opinion toward star players</li>\n<li>Game momentum or standout plays that may influence betting trends</li></ul>\n" +
+                "- High-Value Bets: \n<h2>High-Value Bets</h2>\n<ul>\n<li>Highlight specific betting opportunities with odds</li>\n<li>Include rationale for lesser-known players where value exists</li></ul>\n" +
+                "- Strategic Suggestions: \n<h2>Strategic Suggestions</h2>\n<ul>\n<li>Suggest strategies for experienced bettors</li>\n<li>Consider public biases and player prop inefficiencies</li></ul>\n" +
+                "- Key Insights: \n<h2>Key Insights</h2>\n<ul>\n<li>Offer high-level takeaways that capture game dynamics</li>\n<li>Emphasize actionable insights for future bets</li></ul>\n" +
+                "Begin each response with: <h2 style='font-size: 20px; margin-bottom: 1rem;'>Event: [Team1 vs Team2]</h2> \n" +
+                "Never use asteriks (*) or other special characters in your responses.",
             },
             {
               role: "user",

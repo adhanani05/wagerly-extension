@@ -1,4 +1,5 @@
 // displayData.js
+
 document.addEventListener("DOMContentLoaded", () => {
   const contentDiv = document.getElementById("content");
   let messageHistory = [];
