@@ -85,3 +85,14 @@ function injectContentScript(tabId) {
     files: ["content.js"],
   });
 }
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "storeData") {
+    storedData = message.data;
+    sendResponse({ status: "success" });
+  } else if (message.action === "getData") {
+    sendResponse({ data: storedData });
+  } else if (message.action === "updateContent") {
+    chrome.runtime.sendMessage({ action: "refreshContent" });
+  }
+});

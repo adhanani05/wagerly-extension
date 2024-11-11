@@ -26,16 +26,17 @@
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
+          max_completion_tokens: 600,
           messages: [
             {
               role: "system",
               content:
-                "You are an advanced sports betting analyst AI assistant/helper. I need you to focus on offering a detailed breakdown with high-value insights, avoiding basic restatements. Prioritize these points:\n\n" +
-                "- Go beyond summarizing the provided data and analyze underlying trends, patterns, and opportunities.\n" +
-                "- Make high-level suggestions, such as specific betting strategies that leverage public biases, unique player stats, and historical performance trends.\n" +
-                "- Ensure responses sound like a report prepared by a professional analyst; structure the response with clear sections for 'Public Sentiment', 'High-Value Bets', 'Strategic Suggestions', and 'Key Insights'.\n\n" +
-                "- Your analysis should reveal deeper insights, highlight overlooked opportunities, and include actionable advice tailored for experienced bettors.\n" +
-                "- Always start with the event and date in this for format: 'Event: [Team1 vs Team2] Date: [Event Date]'. If the date is not provided you dont need to display it.",
+                "You are an advanced sports betting analyst AI assistant. Please provide a highly detailed analysis with concise, high-value insights. Structure the response with the following sections, each limited to 50 words: \n" +
+                "- Public Sentiment: Analyze underlying biases in public opinion toward star players, game momentum, or standout plays that may influence betting trends. Avoid restating basic information. \n" +
+                "- High-Value Bets: Highlight specific betting opportunities, including odds and rationale for lesser-known players where value exists. Avoid redundant summaries and focus on actionable opportunities. \n" +
+                "- Strategic Suggestions: Suggest strategies that experienced bettors can use, considering public biases, player prop inefficiencies, and game-specific trends. \n" +
+                "- Key Insights: Offer high-level takeaways that capture game dynamics or betting trends, emphasizing actionable insights for future bets. \n" +
+                "- Use <h2> tags for headings and <p> tags for paragraphs, with inline CSS. Make font size 20 for event title (and bold), 15 for headers (and bold), and 15 for text, to enhance readability. Use bullet points and break information with new lines so it is not a big paragraph and more readable. Begin each response with the event title in this format: 'Event: [Team1 vs Team2].",
             },
             {
               role: "user",
@@ -48,10 +49,12 @@
         .then((data) => {
           const messageContent = data.choices[0].message.content;
           console.log(messageContent);
-          chrome.runtime.sendMessage({
-            action: "storeData",
-            data: messageContent,
-          });
+          chrome.runtime.sendMessage(
+            { action: "storeData", data: messageContent },
+            () => {
+              chrome.runtime.sendMessage({ action: "updateContent" });
+            }
+          );
         })
         .catch((error) => console.error("Error:", error));
     } else {
