@@ -22,5 +22,9 @@
     "16": "icons/W-16.png",
     "48": "icons/W-48.png",
     "128": "icons/W-128.png"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
   }
 }

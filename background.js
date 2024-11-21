@@ -1,3 +1,4 @@
+// background.js
 console.log("Background script loaded");
 let storedData = "";
 const BETMGM_ORIGIN = "https://sports.nj.betmgm.com",
