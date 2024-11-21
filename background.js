@@ -1,98 +1,67 @@
-console.log("Background script loaded"); // New logging line
+console.log("Background script loaded");
 let storedData = "";
-
-const BETMGM_ORIGIN = "https://sports.nj.betmgm.com";
-const DRAFTKINGS_ORIGIN = "https://sportsbook.draftkings.com";
-
-// Allows users to open the side panel by clicking on the action toolbar icon
-chrome.sidePanel
-  .setPanelBehavior({ openPanelOnActionClick: true })
-  .catch((error) => console.error(error));
-
-chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
-  if (!tab.url) return;
-  const url = new URL(tab.url);
-  // Enables the side panel on betmgm.com
-  if (url.origin === BETMGM_ORIGIN || url.origin === DRAFTKINGS_ORIGIN) {
-    await chrome.sidePanel.setOptions({
-      tabId,
-      path: "main-sp.html",
-      enabled: true,
-    });
-  } else {
-    // Disables the side panel on all other sites
-    await chrome.sidePanel.setOptions({
-      tabId,
-      path: "invalid-sp.html",
-      enabled: true,
-    });
-  }
-});
-
-chrome.runtime.onConnect.addListener((port) => {
-  port.onMessage.addListener(async (msg) => {
-    if (port.name === "SidePanelPort") {
-      if (msg.type === "init") {
-        console.log("panel opened");
-
-        await chrome.storage.local.set({ panelOpen: true });
-
-        port.onDisconnect.addListener(async () => {
-          await chrome.storage.local.set({ panelOpen: false });
-          console.log("panel closed");
-          console.log("port disconnected: ", port.name);
-        });
-
-        const tab = await getCurrentTab();
-
-        if (!tab?.id) {
-          console.error("Couldn't get current tab");
-          return;
-        }
-
-        injectContentScript(tab.id);
-
-        port.postMessage({
-          type: "handle-init",
-          message: "panel open",
-        });
-      }
-    }
-  });
-});
-
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (!(tab.id && changeInfo.status === "complete")) return;
-
-  console.log("tab connected: ", tab.url, changeInfo);
-
-  const { panelOpen } = await chrome.storage.local.get("panelOpen");
-  if (panelOpen) {
-    console.log("panel open");
-    injectContentScript(tabId);
-  }
-});
-
+const BETMGM_ORIGIN = "https://sports.nj.betmgm.com",
+  DRAFTKINGS_ORIGIN = "https://sportsbook.draftkings.com";
 async function getCurrentTab() {
-  const queryOptions = { active: true, currentWindow: true };
-  const [tab] = await chrome.tabs.query(queryOptions);
-  return tab;
+  let [t] = await chrome.tabs.query({ active: !0, currentWindow: !0 });
+  return t;
 }
-
-function injectContentScript(tabId) {
+function injectContentScript(t) {
   chrome.scripting.executeScript({
-    target: { tabId: tabId },
+    target: { tabId: t },
     files: ["content.js"],
   });
 }
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "storeData") {
-    storedData = message.data;
-    sendResponse({ status: "success" });
-  } else if (message.action === "getData") {
-    sendResponse({ data: storedData });
-  } else if (message.action === "updateContent") {
-    chrome.runtime.sendMessage({ action: "refreshContent" });
-  }
-});
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: !0 })
+  .catch((t) => console.error(t)),
+  chrome.tabs.onUpdated.addListener(async (t, e, n) => {
+    if (!n.url) return;
+    let a = new URL(n.url);
+    "https://sports.nj.betmgm.com" === a.origin ||
+    "https://sportsbook.draftkings.com" === a.origin
+      ? await chrome.sidePanel.setOptions({
+          tabId: t,
+          path: "main-sp.html",
+          enabled: !0,
+        })
+      : await chrome.sidePanel.setOptions({
+          tabId: t,
+          path: "invalid-sp.html",
+          enabled: !0,
+        });
+  }),
+  chrome.runtime.onConnect.addListener((t) => {
+    t.onMessage.addListener(async (e) => {
+      if ("SidePanelPort" === t.name && "init" === e.type) {
+        console.log("panel opened"),
+          await chrome.storage.local.set({ panelOpen: !0 }),
+          t.onDisconnect.addListener(async () => {
+            await chrome.storage.local.set({ panelOpen: !1 }),
+              console.log("panel closed"),
+              console.log("port disconnected: ", t.name);
+          });
+        let n = await getCurrentTab();
+        if (!n?.id) {
+          console.error("Couldn't get current tab");
+          return;
+        }
+        injectContentScript(n.id),
+          t.postMessage({ type: "handle-init", message: "panel open" });
+      }
+    });
+  }),
+  chrome.tabs.onUpdated.addListener(async (t, e, n) => {
+    if (!(n.id && "complete" === e.status)) return;
+    console.log("tab connected: ", n.url, e);
+    let { panelOpen: a } = await chrome.storage.local.get("panelOpen");
+    a && (console.log("panel open"), injectContentScript(t));
+  }),
+  chrome.runtime.onMessage.addListener((t, e, n) => {
+    "storeData" === t.action
+      ? ((storedData = t.data), n({ status: "success" }))
+      : "getData" === t.action
+      ? n({ data: storedData })
+      : "updateContent" === t.action &&
+        chrome.runtime.sendMessage({ action: "refreshContent" });
+  });

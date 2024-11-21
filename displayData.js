@@ -1,102 +1,61 @@
-// displayData.js
-
 document.addEventListener("DOMContentLoaded", () => {
-  const contentDiv = document.getElementById("content");
-  let messageHistory = [];
-
-  // Create chat container structure
-  const chatContainer = document.createElement("div");
-  chatContainer.className = "chat-container";
-
-  const messagesContainer = document.createElement("div");
-  messagesContainer.className = "chat-messages";
-
-  const inputContainer = document.createElement("div");
-  inputContainer.className = "input-container";
-
-  const input = document.createElement("input");
-  input.type = "text";
-  input.className = "chat-input";
-  input.placeholder = "Ask a question about the analysis...";
-
-  const sendButton = document.createElement("button");
-  sendButton.className = "send-button";
-  sendButton.textContent = "Send";
-
-  inputContainer.appendChild(input);
-  inputContainer.appendChild(sendButton);
-
-  chatContainer.appendChild(messagesContainer);
-  chatContainer.appendChild(inputContainer);
-
-  contentDiv.appendChild(chatContainer);
-
-  // Function to add a message to the chat
-  function addMessage(content, isUser = false, isInitialAnalysis = false) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${
-      isUser
-        ? "user-message"
-        : isInitialAnalysis
-        ? "analysis-message"
-        : "assistant-message"
-    }`;
-
-    if (isInitialAnalysis) {
-      content = content.replace(
-        /<h2>Public Sentiment:<\/h2>/g,
-        '<h2><span class="analysis-header-icon-1"></span>Public Sentiment:</h2>'
-      );
-      content = content.replace(
-        /<h2>High-Value Bets:<\/h2>/g,
-        '<h2><span class="analysis-header-icon-2"></span>High-Value Bets:</h2>'
-      );
-      content = content.replace(
-        /<h2>Strategic Suggestions:<\/h2>/g,
-        '<h2><span class="analysis-header-icon-3"></span>Strategic Suggestions:</h2>'
-      );
-      content = content.replace(
-        /<h2>Key Insights:<\/h2>/g,
-        '<h2><span class="analysis-header-icon-4"></span>Key Insights:</h2>'
-      );
-    }
-
-    messageDiv.innerHTML = content;
-    messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-    // Add message to history
-    messageHistory.push({
-      role: isUser ? "user" : "assistant",
-      content: content,
-    });
+  let e = document.getElementById("content"),
+    a = [],
+    t = document.createElement("div");
+  t.className = "chat-container";
+  let n = document.createElement("div");
+  n.className = "chat-messages";
+  let s = document.createElement("div");
+  s.className = "input-container";
+  let i = document.createElement("input");
+  (i.type = "text"),
+    (i.className = "chat-input"),
+    (i.placeholder = "Ask a question about the analysis...");
+  let r = document.createElement("button");
+  function l(e, t = !1, s = !1) {
+    let i = document.createElement("div");
+    (i.className = `message ${
+      t ? "user-message" : s ? "analysis-message" : "assistant-message"
+    }`),
+      s &&
+        (e = (e = (e = (e = e.replace(
+          /<h2>Public Sentiment:<\/h2>/g,
+          '<h2><span class="analysis-header-icon-1"></span>Public Sentiment:</h2>'
+        )).replace(
+          /<h2>High-Value Bets:<\/h2>/g,
+          '<h2><span class="analysis-header-icon-2"></span>High-Value Bets:</h2>'
+        )).replace(
+          /<h2>Strategic Suggestions:<\/h2>/g,
+          '<h2><span class="analysis-header-icon-3"></span>Strategic Suggestions:</h2>'
+        )).replace(
+          /<h2>Key Insights:<\/h2>/g,
+          '<h2><span class="analysis-header-icon-4"></span>Key Insights:</h2>'
+        )),
+      (i.innerHTML = e),
+      n.appendChild(i),
+      (n.scrollTop = n.scrollHeight),
+      a.push({ role: t ? "user" : "assistant", content: e });
   }
-
-  // Show loading spinner
-  function showLoading() {
-    const loadingDiv = document.createElement("div");
-    loadingDiv.className = "loading";
-    const spinner = document.createElement("div");
-    spinner.className = "loading-spinner";
-    loadingDiv.appendChild(spinner);
-    messagesContainer.appendChild(loadingDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    return loadingDiv;
+  function c() {
+    let e = document.createElement("div");
+    e.className = "loading";
+    let a = document.createElement("div");
+    return (
+      (a.className = "loading-spinner"),
+      e.appendChild(a),
+      n.appendChild(e),
+      (n.scrollTop = n.scrollHeight),
+      e
+    );
   }
-
-  // Function to send message to OpenAI API
-  async function sendToOpenAI(userMessage) {
-    const apiKey =
-      "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";
-
+  async function o(e) {
     try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
+      let t = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
+            Authorization:
+              "Bearer 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",
           },
           body: JSON.stringify({
             model: "gpt-4o-mini",
@@ -107,66 +66,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 content:
                   "You are an advanced sports betting analyst AI assistant. Provide a concise, high-value response. Do not use asteriks or any special characters in your response.",
               },
-              ...messageHistory,
-              {
-                role: "user",
-                content: userMessage,
-              },
+              ...a,
+              { role: "user", content: e },
             ],
           }),
-        }
+        }),
+        n = await t.json();
+      return n.choices[0].message.content;
+    } catch (s) {
+      return (
+        console.error("Error:", s),
+        "Sorry, I encountered an error while processing your request. Please try again."
       );
-
-      const data = await response.json();
-      return data.choices[0].message.content;
-    } catch (error) {
-      console.error("Error:", error);
-      return "Sorry, I encountered an error while processing your request. Please try again.";
     }
   }
-
-  // Handle sending messages
-  async function handleSend() {
-    const text = input.value.trim();
-    if (!text) return;
-
-    addMessage(text, true);
-    input.value = "";
-
-    const loadingDiv = showLoading();
-
-    // Get response from OpenAI
-    const response = await sendToOpenAI(text);
-    loadingDiv.remove();
-    addMessage(response);
+  async function d() {
+    let e = i.value.trim();
+    if (!e) return;
+    l(e, !0), (i.value = "");
+    let a = c(),
+      t = await o(e);
+    a.remove(), l(t);
   }
-
-  // Event listeners
-  sendButton.addEventListener("click", handleSend);
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      handleSend();
-    }
-  });
-
-  // Listen for initial data and updates
-  chrome.runtime.sendMessage({ action: "getData" }, (response) => {
-    if (response && response.data) {
-      addMessage(response.data, false, true); // Mark as initial analysis
-    }
-  });
-
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message.action === "refreshContent") {
-      chrome.runtime.sendMessage({ action: "getData" }, (response) => {
-        if (response && response.data) {
-          // Clear existing messages and history
-          messagesContainer.innerHTML = "";
-          messageHistory = [];
-          // Add new analysis
-          addMessage(response.data, false, true); // Mark as initial analysis
-        }
-      });
-    }
-  });
+  (r.className = "send-button"),
+    (r.textContent = "Send"),
+    s.appendChild(i),
+    s.appendChild(r),
+    t.appendChild(n),
+    t.appendChild(s),
+    e.appendChild(t),
+    r.addEventListener("click", d),
+    i.addEventListener("keypress", (e) => {
+      "Enter" === e.key && d();
+    }),
+    chrome.runtime.sendMessage({ action: "getData" }, (e) => {
+      e && e.data && l(e.data, !1, !0);
+    }),
+    chrome.runtime.onMessage.addListener((e) => {
+      "refreshContent" === e.action &&
+        chrome.runtime.sendMessage({ action: "getData" }, (e) => {
+          e && e.data && ((n.innerHTML = ""), (a = []), l(e.data, !1, !0));
+        });
+    });
 });
