@@ -265,3 +265,24 @@ body {
 .modal-content button:hover {
   background-color: var(--primary-light);
 }
+
+.settings-button {
+  padding: 0.625rem;
+  background-color: var(--secondary-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 42px;
+}
+
+.settings-button:hover {
+  background-color: var(--border-color);
+  border-color: var(--text-secondary);
+}

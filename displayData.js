@@ -26,7 +26,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const settingsButton = document.createElement("button");
     settingsButton.className = "settings-button";
-    settingsButton.textContent = "Settings";
+    settingsButton.textContent = "⚙️";
+    settingsButton.title = "Settings";
     settingsButton.onclick = () => chrome.runtime.openOptionsPage();
 
     inputContainer.appendChild(input);
@@ -155,11 +156,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function loadInitialContent(container) {
     // Clear existing messages first
     container.innerHTML = "";
+    messageHistory = []; // Reset message history
 
     chrome.runtime.sendMessage({ action: "getData" }, (response) => {
       if (response && response.data) {
-        // Reset message history when loading new content
-        messageHistory = [];
+        // Add the system message to message history
+        messageHistory.push({
+          role: "system",
+          content:
+            "You are an advanced sports betting analyst AI assistant. Provide a concise, high-value response. Do not use asteriks or any special characters in your response.",
+        });
+
+        // Add the initial analysis as an assistant message
+        messageHistory.push({
+          role: "assistant",
+          content: response.data,
+        });
+
         addMessage(container, response.data, "analysis");
       }
     });

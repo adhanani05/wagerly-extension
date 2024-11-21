@@ -131,18 +131,27 @@
     );
   });
 
-  let prompt = "";
-  let hasFetchedData = false;
+  let prompt = "Please analyze the following sports betting content:\n\n";
 
+  // Extract team names from the page content
   const betmgm_root = document.getElementById("main-view");
   if (betmgm_root) {
-    prompt += betmgm_root.innerText + "\n";
+    // Try to find team names in the content
+    const content = betmgm_root.innerText;
+    prompt += content + "\n";
   }
 
   const draftkings_root = document.getElementById("event-page-wrapper");
   if (draftkings_root) {
-    prompt += draftkings_root.innerText + "\n";
+    const content = draftkings_root.innerText;
+    prompt += content + "\n";
   }
+
+  // Add explicit request for team identification
+  prompt +=
+    "\nPlease identify the teams involved and provide analysis for this matchup.";
+
+  let hasFetchedData = false;
 
   if (prompt && !hasFetchedData) {
     hasFetchedData = true;
