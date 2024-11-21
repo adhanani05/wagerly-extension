@@ -153,8 +153,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function loadInitialContent(container) {
+    // Clear existing messages first
+    container.innerHTML = "";
+
     chrome.runtime.sendMessage({ action: "getData" }, (response) => {
       if (response && response.data) {
+        // Reset message history when loading new content
+        messageHistory = [];
         addMessage(container, response.data, "analysis");
       }
     });

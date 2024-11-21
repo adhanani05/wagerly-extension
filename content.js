@@ -118,15 +118,18 @@
     return;
   }
 
-  chrome.runtime.sendMessage(
-    {
-      action: "storeData",
-      data: '<div class="cool-loading">Analyzing page content...</div>',
-    },
-    () => {
-      chrome.runtime.sendMessage({ action: "updateContent" });
-    }
-  );
+  // Clear any existing data first
+  chrome.runtime.sendMessage({ action: "storeData", data: "" }, () => {
+    chrome.runtime.sendMessage(
+      {
+        action: "storeData",
+        data: '<div class="cool-loading">Analyzing page content...</div>',
+      },
+      () => {
+        chrome.runtime.sendMessage({ action: "updateContent" });
+      }
+    );
+  });
 
   let prompt = "";
   let hasFetchedData = false;
