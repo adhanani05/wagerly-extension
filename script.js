@@ -1,4 +1,3 @@
-// script.js
 const port = chrome.runtime.connect({ name: "SidePanelPort" });
 port.postMessage({ type: "init" }),
   port.onMessage.addListener((e) => {

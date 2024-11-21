@@ -1,193 +1,132 @@
-// displayData.js
 document.addEventListener("DOMContentLoaded", async () => {
-  const contentDiv = document.getElementById("content");
-  let messageHistory = [];
-
-  // Setup chat interface
-  function setupChat() {
-    const chatContainer = document.createElement("div");
-    chatContainer.className = "chat-container";
-
-    const messagesContainer = document.createElement("div");
-    messagesContainer.className = "chat-messages";
-    messagesContainer.id = "chat-messages";
-
-    const inputContainer = document.createElement("div");
-    inputContainer.className = "input-container";
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.className = "chat-input";
-    input.placeholder = "Ask a question about the analysis...";
-
-    const sendButton = document.createElement("button");
-    sendButton.className = "send-button";
-    sendButton.textContent = "Send";
-
-    const settingsButton = document.createElement("button");
-    settingsButton.className = "settings-button";
-    settingsButton.textContent = "⚙️";
-    settingsButton.title = "Settings";
-    settingsButton.onclick = () => chrome.runtime.openOptionsPage();
-
-    inputContainer.appendChild(input);
-    inputContainer.appendChild(sendButton);
-    inputContainer.appendChild(settingsButton);
-
-    chatContainer.appendChild(messagesContainer);
-    chatContainer.appendChild(inputContainer);
-    contentDiv.appendChild(chatContainer);
-
-    setupMessageHandling(messagesContainer, input, sendButton);
-    loadInitialContent(messagesContainer);
+  let e = document.getElementById("content"),
+    t = [];
+  function n() {
+    let t = document.createElement("div");
+    t.className = "chat-container";
+    let n = document.createElement("div");
+    (n.className = "chat-messages"), (n.id = "chat-messages");
+    let s = document.createElement("div");
+    s.className = "input-container";
+    let i = document.createElement("input");
+    (i.type = "text"),
+      (i.className = "chat-input"),
+      (i.placeholder = "Ask a question about the analysis...");
+    let o = document.createElement("button");
+    (o.className = "send-button"), (o.textContent = "Send");
+    let r = document.createElement("button");
+    (r.className = "settings-button"),
+      (r.textContent = "⚙️"),
+      (r.title = "Settings"),
+      (r.onclick = () => chrome.runtime.openOptionsPage()),
+      s.appendChild(i),
+      s.appendChild(o),
+      s.appendChild(r),
+      t.appendChild(n),
+      t.appendChild(s),
+      e.appendChild(t),
+      a(n, i, o),
+      l(n);
   }
-
-  async function setupMessageHandling(messagesContainer, input, sendButton) {
-    async function handleSendMessage() {
-      const message = input.value.trim();
-      if (!message) return;
-
-      input.value = "";
-      addMessage(messagesContainer, message, "user");
-
-      const apiKey = await chrome.storage.local.get("openaiApiKey");
-      if (!apiKey.openaiApiKey) {
-        addMessage(
-          messagesContainer,
+  async function a(e, n, a) {
+    async function l() {
+      let a = n.value.trim();
+      if (!a) return;
+      (n.value = ""), i(e, a, "user");
+      let l = await chrome.storage.local.get("openaiApiKey");
+      if (!l.openaiApiKey) {
+        i(
+          e,
           "Please set your OpenAI API key in the extension settings to continue.",
           "assistant"
         );
         return;
       }
-
-      addLoadingMessage(messagesContainer);
+      o(e);
       try {
-        const response = await sendToOpenAI(message);
-        removeLoadingMessage(messagesContainer);
-        addMessage(messagesContainer, response, "assistant");
-        messageHistory.push({ role: "assistant", content: response });
-      } catch (error) {
-        removeLoadingMessage(messagesContainer);
-        addMessage(
-          messagesContainer,
-          "Error processing your request. Please try again.",
-          "assistant"
-        );
+        let c = await s(a);
+        r(e), i(e, c, "assistant"), t.push({ role: "assistant", content: c });
+      } catch (p) {
+        r(e),
+          i(e, "Error processing your request. Please try again.", "assistant");
       }
     }
-
-    sendButton.addEventListener("click", handleSendMessage);
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") handleSendMessage();
-    });
+    a.addEventListener("click", l),
+      n.addEventListener("keypress", (e) => {
+        "Enter" === e.key && l();
+      });
   }
-
-  async function sendToOpenAI(userMessage) {
-    const apiKey = await chrome.storage.local.get("openaiApiKey");
-    if (!apiKey.openaiApiKey) {
-      throw new Error("API key not set");
-    }
-
+  async function s(e) {
+    let n = await chrome.storage.local.get("openaiApiKey");
+    if (!n.openaiApiKey) throw Error("API key not set");
     try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey.openaiApiKey}`,
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            max_completion_tokens: 150,
-            messages: [
-              {
-                role: "system",
-                content:
-                  "You are an advanced sports betting analyst AI assistant. Provide a concise, high-value response. Do not use asteriks or any special characters in your response.",
-              },
-              ...messageHistory,
-              { role: "user", content: userMessage },
-            ],
+      let a = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${n.openaiApiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          max_completion_tokens: 150,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are an advanced sports betting analyst AI assistant. Provide a concise, high-value response. Do not use asteriks or any special characters in your response.",
+            },
+            ...t,
+            { role: "user", content: e },
+          ],
+        }),
+      });
+      if (!a.ok) throw Error(`HTTP error! status: ${a.status}`);
+      let s = await a.json();
+      return s.choices[0].message.content;
+    } catch (i) {
+      throw (console.error("Error:", i), i);
+    }
+  }
+  function i(e, n, a) {
+    let s = document.createElement("div");
+    (s.className = `message ${a}-message`),
+      (s.innerHTML = n),
+      e.appendChild(s),
+      (e.scrollTop = e.scrollHeight),
+      "user" === a && t.push({ role: "user", content: n });
+  }
+  function o(e) {
+    let t = document.createElement("div");
+    (t.className = "message loading"),
+      (t.innerHTML = '<div class="loading-spinner"></div>'),
+      (t.id = "loading-message"),
+      e.appendChild(t),
+      (e.scrollTop = e.scrollHeight);
+  }
+  function r(e) {
+    let t = e.querySelector("#loading-message");
+    t && t.remove();
+  }
+  async function l(e) {
+    (e.innerHTML = ""),
+      (t = []),
+      chrome.runtime.sendMessage({ action: "getData" }, (n) => {
+        n &&
+          n.data &&
+          (t.push({
+            role: "system",
+            content:
+              "You are an advanced sports betting analyst AI assistant. Provide a concise, high-value response. Do not use asteriks or any special characters in your response.",
           }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.choices[0].message.content;
-    } catch (error) {
-      console.error("Error:", error);
-      throw error;
-    }
+          t.push({ role: "assistant", content: n.data }),
+          i(e, n.data, "analysis"));
+      });
   }
-
-  function addMessage(container, message, type) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${type}-message`;
-    messageDiv.innerHTML = message;
-    container.appendChild(messageDiv);
-    container.scrollTop = container.scrollHeight;
-
-    if (type === "user") {
-      messageHistory.push({ role: "user", content: message });
-    }
-  }
-
-  function addLoadingMessage(container) {
-    const loadingDiv = document.createElement("div");
-    loadingDiv.className = "message loading";
-    loadingDiv.innerHTML = '<div class="loading-spinner"></div>';
-    loadingDiv.id = "loading-message";
-    container.appendChild(loadingDiv);
-    container.scrollTop = container.scrollHeight;
-  }
-
-  function removeLoadingMessage(container) {
-    const loadingMessage = container.querySelector("#loading-message");
-    if (loadingMessage) {
-      loadingMessage.remove();
-    }
-  }
-
-  async function loadInitialContent(container) {
-    // Clear existing messages first
-    container.innerHTML = "";
-    messageHistory = []; // Reset message history
-
-    chrome.runtime.sendMessage({ action: "getData" }, (response) => {
-      if (response && response.data) {
-        // Add the system message to message history
-        messageHistory.push({
-          role: "system",
-          content:
-            "You are an advanced sports betting analyst AI assistant. Provide a concise, high-value response. Do not use asteriks or any special characters in your response.",
-        });
-
-        // Add the initial analysis as an assistant message
-        messageHistory.push({
-          role: "assistant",
-          content: response.data,
-        });
-
-        addMessage(container, response.data, "analysis");
+  n(),
+    chrome.runtime.onMessage.addListener((e, t, n) => {
+      if ("refreshContent" === e.action) {
+        let a = document.getElementById("chat-messages");
+        a && l(a);
       }
     });
-  }
-
-  // Initialize the chat interface
-  setupChat();
-
-  // Listen for content updates
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "refreshContent") {
-      const messagesContainer = document.getElementById("chat-messages");
-      if (messagesContainer) {
-        loadInitialContent(messagesContainer);
-      }
-    }
-  });
 });

@@ -1,45 +1,33 @@
-// apiKeyManager.js
 class APIKeyManager {
   static async getAPIKey() {
-    const result = await chrome.storage.local.get("openaiApiKey");
-    return result.openaiApiKey;
+    let e = await chrome.storage.local.get("openaiApiKey");
+    return e.openaiApiKey;
   }
-
-  static async setAPIKey(apiKey) {
-    await chrome.storage.local.set({ openaiApiKey: apiKey });
+  static async setAPIKey(e) {
+    await chrome.storage.local.set({ openaiApiKey: e });
   }
-
   static async checkAPIKey() {
-    const apiKey = await this.getAPIKey();
-    return !!apiKey;
+    let e = await this.getAPIKey();
+    return !!e;
   }
-
-  static validateAPIKeyFormat(apiKey) {
-    return apiKey.startsWith("sk-") && apiKey.length > 20;
+  static validateAPIKeyFormat(e) {
+    return e.startsWith("sk-") && e.length > 20;
   }
 }
-
-// Set up API key modal functionality
 document.addEventListener("DOMContentLoaded", async () => {
-  const modal = document.getElementById("api-key-modal");
-  const saveButton = document.getElementById("save-api-key");
-  const apiKeyInput = document.getElementById("api-key-input");
-
-  const hasApiKey = await APIKeyManager.checkAPIKey();
-  if (!hasApiKey) {
-    modal.style.display = "flex";
-  }
-
-  saveButton.addEventListener("click", async () => {
-    const apiKey = apiKeyInput.value.trim();
-
-    if (!APIKeyManager.validateAPIKeyFormat(apiKey)) {
-      alert("Please enter a valid OpenAI API key (should start with sk-)");
-      return;
-    }
-
-    await APIKeyManager.setAPIKey(apiKey);
-    modal.style.display = "none";
-    location.reload();
-  });
+  let e = document.getElementById("api-key-modal"),
+    a = document.getElementById("save-api-key"),
+    t = document.getElementById("api-key-input"),
+    i = await APIKeyManager.checkAPIKey();
+  i || (e.style.display = "flex"),
+    a.addEventListener("click", async () => {
+      let a = t.value.trim();
+      if (!APIKeyManager.validateAPIKeyFormat(a)) {
+        alert("Please enter a valid OpenAI API key (should start with sk-)");
+        return;
+      }
+      await APIKeyManager.setAPIKey(a),
+        (e.style.display = "none"),
+        location.reload();
+    });
 });
