@@ -61,7 +61,7 @@
     hasFetchedData = true;
     if (prompt) {
       const apiKey =
-        "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";
+        "you-api-key";
 
       fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
